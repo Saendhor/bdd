@@ -1,0 +1,45 @@
+SELECT *
+FROM persone p
+WHERE NOT EXISTS (
+    -- Seleziona gli eventi organizzati da catanesi...
+    SELECT *
+    FROM organizzatore o
+    JOIN persone org ON o.id_organizzatore = org.id 
+    WHERE org.provincia_residenza = 'CT'
+    AND NOT EXISTS (
+        -- ...a cui la persona p NON ha partecipato
+        SELECT *
+        FROM partecipante pa
+        WHERE pa.idpersona = p.id 
+        AND pa.idevento = o.idevento
+    )
+);
+
+SELECT p.id, p.nome
+FROM persone p
+JOIN partecipante pa ON p.id = pa.idpersona
+JOIN organizzatore o ON pa.idevento = o.idevento
+JOIN persone org ON o.id = org.id
+WHERE org.provincia_residenza = 'CT'
+GROUP BY p.id, p.nome
+HAVING COUNT(DISTINCT o.idevento) = (
+    SELECT COUNT(DISTINCT o2.idevento)
+    FROM organizzatore o2
+    JOIN persone org2 ON o2.id = org2.id
+    WHERE org2.provincia_residenza = 'CT'
+);
+
+SELECT *
+FROM Studenti s
+WHERE NOT EXISTS (
+    -- Seleziona i corsi...
+    SELECT *
+    FROM Corsi c
+    WHERE NOT EXISTS (
+        -- ...che lo studente 's' NON ha superato
+        SELECT *
+        FROM EsamiSuperati e
+        WHERE e.id_studente = s.id
+        AND e.id_corso = c.id
+    )
+);
