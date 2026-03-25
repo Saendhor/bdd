@@ -1,0 +1,60 @@
+Questa è una classica analisi di **convenienza della ridondanza** in un database. L'attributo `num_prenotazioni` nella tabella `Lezione` è ridondante perché il suo valore può essere calcolato in ogni momento contando le righe corrispondenti nella tabella `Prenotazione`.
+
+Per decidere se tenerlo, dobbiamo confrontare il **costo di aggiornamento** (quando inseriamo una prenotazione) con il **beneficio in lettura** (quando interroghiamo il numero di partecipanti).
+
+---
+
+### 1. Analisi dei Costi e dei Benefici
+
+Calcoliamo il numero di operazioni (accessi ai dati) nei due scenari:
+
+#### Scenario A: Mantenere la ridondanza (Attributo presente)
+
+* **Query 1 (Scrittura - 100 volte/giorno):** Ogni volta che un iscritto prenota, il sistema deve fare due cose:
+1. Inserire la riga in `Prenotazione` (1 scrittura).
+2. Aggiornare il contatore in `Lezione` (1 lettura + 1 scrittura).
+
+
+* **Totale accessi:**  operazioni/giorno.
+
+
+* **Query 2 (Lettura - 5 volte/giorno):** Basta leggere il valore già pronto nella tabella `Lezione`.
+* **Totale accessi:**  operazioni/giorno.
+
+
+* **Costo Totale Stimato:** **305 operazioni/giorno.**
+
+#### Scenario B: Eliminare la ridondanza (Calcolo al volo)
+
+* **Query 1 (Scrittura - 100 volte/giorno):** Basta inserire la riga in `Prenotazione`.
+* **Totale accessi:**  operazioni/giorno.
+
+
+* **Query 2 (Lettura - 5 volte/giorno):** Per sapere quanti sono i partecipanti, il database deve contare tutte le prenotazioni per quella lezione. Con 1000 iscritti e 240 lezioni, ipotizziamo una media di circa 40-50 prenotazioni per lezione.
+* **Totale accessi:**  operazioni/giorno.
+
+
+* **Costo Totale Stimato:** **350 operazioni/giorno.**
+
+---
+
+### 2. Valutazione dei Volumi
+
+I volumi forniti sono piuttosto **bassi**:
+
+* **1000 iscritti** e **240 lezioni** sono numeri che un moderno DBMS gestisce in frazioni di millisecondo, indipendentemente dalla ridondanza.
+* La frequenza delle query (100 vs 5) mostra che il sistema è sbilanciato verso l'**aggiornamento**.
+
+### 3. Conclusione: Conviene o no?
+
+**Risposta breve: No, in questo caso specifico NON conviene mantenere la ridondanza.**
+
+**Giustificazione:**
+
+1. **Frequenza di aggiornamento elevata:** La query di inserimento (100/giorno) è 20 volte più frequente della query di lettura (5/giorno). Mantenere il dato aggiornato costa più fatica di quanta se ne risparmi leggendolo.
+2. **Rischio di Inconsistenza:** Ogni volta che si introduce ridondanza, c'è il rischio che il contatore in `Lezione` non corrisponda al numero reale di righe in `Prenotazione` (ad esempio se una transazione fallisce o una prenotazione viene cancellata senza aggiornare il contatore).
+3. **Volumi ridotti:** Con soli 1000 iscritti, l'operazione di `COUNT(*)` su una tabella di prenotazioni è istantanea. Il "guadagno" prestazionale della ridondanza sarebbe impercettibile per l'utente, ma complicherebbe inutilmente il codice (necessità di Trigger o logica applicativa aggiuntiva).
+
+> **Regola generale:** La ridondanza conviene quando le letture sono migliaia di volte superiori alle scritture e i volumi di dati sono tali da rendere il calcolo "al volo" troppo lento. Qui siamo nella situazione opposta.
+
+Ti servirebbe vedere come cambierebbe il calcolo se le letture diventassero, ad esempio, 10.000 al giorno?

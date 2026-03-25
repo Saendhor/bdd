@@ -1,0 +1,6 @@
+Si consideri lo schema di base di dati sulle relazioni:
+– MATERIE (Codice, Facoltà, Denominazione, Professore)
+– STUDENTI (Matricola, Cognome, Nome, Facoltà)
+– PROFESSORI (Matricola, Cognome, Nome)
+– ESAMI (Studente, Materia, Voto, Data)
+– PIANIDISTUDIO (Studente, Materia, Anno)

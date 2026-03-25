@@ -1,0 +1,45 @@
+Tabella Utenti.
+Creare un trigger che impedisca l'inserimento di un utente se l'età inserita è < 18 anni
+
+CREATE TRIGGER check_age
+BEFORE INSERT ON Utenti
+FOR EACH ROW
+BEGIN
+	-- aggiorno Utenti solo se il nuovo elemento ha età < 18 anni
+	IF NEW.eta < 18
+		INSERT INTO Utenti (nome, cognome, eta)
+		VALUES (NEW.nome, NEW.cognome, NEW.eta)
+	END IF;
+END;
+
+il trigger sta già cercando di inserire il record, quindi non devi scriverne un altro dentro.
+Cosa c'è che non va?
+
+    Loop Infinito: Se dentro un trigger che si attiva su INSERT scrivi un comando INSERT sulla stessa tabella, il trigger si riattiverà all'infinito (o darà errore).
+
+    Bloccare l'azione: Se vuoi impedire l'inserimento, non devi "non fare nulla", ma devi proprio generare un errore che interrompa l'operazione SQL.
+
+-- SOLUZIONE --
+
+DELIMITER //
+
+CREATE TRIGGER check_age
+BEFORE INSERT ON Utenti
+FOR EACH ROW
+BEGIN
+    -- Se l'età è minore di 18, blocchiamo tutto con un errore
+    IF NEW.eta < 18 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Errore: L''utente deve essere maggiorenne!';
+    END IF;
+    
+    -- Se l'età è >= 18, il trigger finisce e l'INSERT procede normalmente.
+END //
+
+DELIMITER ;
+
+SIGNAL SQLSTATE '45000': È il codice standard per dire al database "Ehi, è successo un errore definito dall'utente".
+
+MESSAGE_TEXT: È il messaggio che apparirà sullo schermo di chi prova a fare l'inserimento.
+
+Niente INSERT interno: Se la condizione IF non viene incontrata, il database prosegue da solo a inserire i dati che avevi inviato originariamente.

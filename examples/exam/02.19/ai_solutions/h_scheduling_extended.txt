@@ -1,0 +1,76 @@
+Lo schedule è composto da tre transazioni:
+
+    T1: w1​(x),r1​(z),w1​(y)
+
+    T2: r2​(y),w2​(x),r2​(z)
+
+    T3: r3​(x),w3​(z)
+
+1. Lo schedule è CSR o VSR?
+
+Per verificare se è Conflict Serializable (CSR), dobbiamo costruire il Grafo dei Conflitti (o Grafo di Precedenza) e controllare se presenta cicli. I conflitti si verificano tra operazioni di transazioni diverse che accedono alla stessa risorsa, dove almeno una delle due è una scrittura (w).
+
+Analisi dei conflitti in S:
+
+    Su x:
+
+        w1​(x)→r3​(x) (T1 precede T3)
+
+        w1​(x)→w2​(x) (T1 precede T2)
+
+        r3​(x)→w2​(x) (T3 precede T2)
+
+    Su y:
+
+        r2​(y)→w1​(y) (T2 precede T1)
+
+    Su z:
+
+        r1​(z)→w3​(z) (T1 precede T3)
+
+        w3​(z)→r2​(z) (T3 precede T2)
+
+Il Grafo dei Conflitti:
+Dalle relazioni sopra otteniamo gli archi:
+
+    T1→T3
+
+    T3→T2
+
+    T2→T1
+
+Conclusione CSR:
+Esiste un ciclo T1→T3→T2→T1. Pertanto, lo schedule non è CSR.
+
+Conclusione VSR:
+Uno schedule che non è CSR può essere View Serializable (VSR) solo se sono presenti "scritture cieche" (blind writes). In questo schedule, ogni scrittura è preceduta da una lettura della stessa transazione o fa parte di un flusso logico standard, ma soprattutto, il ciclo coinvolge conflitti di lettura/scrittura diretti. Senza blind writes che "coprano" i conflitti, un ciclo nel grafo dei conflitti implica quasi sempre che non sia nemmeno VSR. In questo caso specifico, non è VSR.
+2. Il protocollo 2PL causa deadlock?
+
+Il protocollo Two-Phase Locking (2PL) richiede che una transazione acquisisca un lock prima di operare e non possa acquisirne di nuovi dopo averne rilasciato uno. Vediamo la sequenza temporale delle richieste di lock (S=Shared/Read, X=Exclusive/Write):
+
+    w1​(x): T1 richiede e ottiene X1​(x).
+
+    r2​(y): T2 richiede e ottiene S2​(y).
+
+    r3​(x): T3 richiede S3​(x). Bloccata da X1​(x). (T3 aspetta T1)
+
+    w2​(x): T2 richiede X2​(x). Bloccata da X1​(x). (T2 aspetta T1)
+
+    r1​(z): T1 richiede e ottiene S1​(z).
+
+    w3​(z): (T3 è ancora bloccata).
+
+    r2​(z): (T2 è ancora bloccata).
+
+    w1​(y): T1 richiede X1​(y). Ma y è occupata da S2​(y). T1 si blocca aspettando T2.
+
+Analisi del Deadlock:
+
+    T2 sta aspettando che T1 rilasci il lock su x.
+
+    T1 sta aspettando che T2 rilasci il lock su y.
+
+Abbiamo una dipendenza circolare: T1 → T2 → T1.
+Sì, lo scheduler 2PL causa un deadlock.
+
+Ti serve aiuto per disegnare il grafo dei conflitti o vuoi vedere come cambierebbe lo schedule con un protocollo diverso (come il Timestamp Ordering)?

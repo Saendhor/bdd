@@ -1,0 +1,41 @@
+Si consideri lo schema di base di dati sulle relazioni:
+– MATERIE (Codice, Facoltà, Denominazione, Professore)
+– STUDENTI (Matricola, Cognome, Nome, Facoltà)
+– PROFESSORI (Matricola, Cognome, Nome)
+– ESAMI (Studente, Materia, Voto, Data)
+– PIANIDISTUDIO (Studente, Materia, Anno)
+
+Trovare gli studenti che hanno riportato in almeno un esame una votazione pari a 30 mostrando per ciascuno di essi nome, cognome e data della prima di tali occasioni
+
+//SQL
+SELECT S.Nome, S.Cognome, MIN(E.Data) AS PrimaOccasione
+FROM STUDENTI S
+JOIN ESAMI E ON S.Matricola = E.Studente
+WHERE E.Voto = 30
+GROUP BY S.Matricola, S.Nome, S.Cognome;
+
+//Algebra Relazionale
+In algebra relazionale non esiste un modo "standard" universale per gestire le funzioni di aggregazione (come il MIN), a meno di non usare l'operatore di raggruppamento (γ).
+
+Passaggi logici:
+
+    Selezione: Filtriamo la relazione ESAMI per Voto = 30.
+
+    Aggregazione: Usiamo l'operatore γ per trovare la data minima per ogni studente.
+
+    Join: Uniamo il risultato con STUDENTI per recuperare Nome e Cognome.
+
+    Proiezione: Mostriamo solo le colonne richieste.
+
+La formula:
+π Nome,Cognome,PrimaData​(STUDENTI ⋈ Matricola=Studente​(γStudente, min(Data)→PrimaData​(σVoto=30​(ESAMI))))
+Alternativa senza operatore di aggregazione (Pura)
+
+Se il tuo corso non prevede l'operatore γ, trovare il "minimo" diventa molto più complesso: bisognerebbe usare il prodotto cartesiano per trovare tutte le date che non sono le prime (ovvero quelle per cui ne esiste una precedente) e sottrarle dall'insieme totale. Solitamente, però, per queste query si dà per scontato l'uso dell'operatore di raggruppamento.
+Riepilogo dello schema logico
+
+    Filtro: Voto = 30.
+
+    Aggregazione: Raggruppamento per studente per isolare la data più vecchia.
+
+    Join: Collegamento tra ID studente e dati anagrafici.

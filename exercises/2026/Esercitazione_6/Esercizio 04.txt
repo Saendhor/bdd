@@ -1,0 +1,77 @@
+Si consideri lo schema di base di dati sulle relazioni:
+– MATERIE (Codice, Facoltà, Denominazione, Professore)
+– STUDENTI (Matricola, Cognome, Nome, Facoltà)
+– PROFESSORI (Matricola, Cognome, Nome)
+– ESAMI (Studente, Materia, Voto, Data)
+– PIANIDISTUDIO (Studente, Materia, Anno)
+
+per ogni insegnamento della facoltà di lettere, lo studente (o gli studenti) che hanno superato l'esame con il voto più alto
+
+Questa è un'ottima sfida che mette a confronto la logica dichiarativa dell'Algebra Relazionale (che è alla base dell'Algebra Lineare applicata ai database) e la sintassi pratica di SQL.
+
+Il problema principale qui è gestire il "voto più alto" (un valore scalare massimo) associandolo però ai dati dello studente (i vettori riga originali).
+1. Risoluzione in Algebra Relazionale
+
+In algebra relazionale non esiste un operatore MAX. Dobbiamo arrivarci per sottrazione: troviamo tutti gli esami che non sono i più alti e li sottraiamo dall'insieme totale.
+
+Sia E la proiezione degli esami di Lettere:
+E=πStudente,Materia,Voto​(σFacoltaˋ=′Lettere′​(ESAMI⋈MATERIE))
+
+    Troviamo i voti "non massimi" (quelli per cui esiste un altro voto più alto nella stessa materia):
+    NonMassimi=πE.Studente,E.Materia,E.Voto​(E⋈E.Materia=E′.Materia∧E.Voto<E′.Voto​ρE′​(E))
+
+    Sottraiamo dal totale per ottenere i migliori:
+    Risultato=E−NonMassimi
+
+2. Risoluzione in SQL
+
+In SQL moderno, il modo più elegante e performante per risolvere questo problema è l'utilizzo delle Window Functions (funzioni finestra), che permettono di creare una classifica per ogni "partizione" (materia).
+Soluzione con RANK() (Consigliata)
+
+Questa query gestisce automaticamente i casi di parità (se due studenti hanno entrambi 30, li restituisce entrambi).
+SQL
+
+SELECT Cognome, Nome, Denominazione, Voto
+FROM (
+    SELECT 
+        S.Cognome, 
+        S.Nome, 
+        M.Denominazione, 
+        E.Voto,
+        RANK() OVER (PARTITION BY E.Materia ORDER BY E.Voto DESC) as pos
+    FROM ESAMI E
+    JOIN MATERIE M ON E.Materia = M.Codice
+    JOIN STUDENTI S ON E.Studente = S.Matricola
+    WHERE M.Facoltà = 'Lettere'
+) AS Classifica
+WHERE pos = 1;
+
+Soluzione "Classica" (Senza Window Functions)
+
+Se devi usare uno standard SQL più vecchio o accademico, puoi usare una subquery correlata:
+SQL
+
+SELECT S.Cognome, S.Nome, M.Denominazione, E.Voto
+FROM ESAMI E
+JOIN MATERIE M ON E.Materia = M.Codice
+JOIN STUDENTI S ON E.Studente = S.Matricola
+WHERE M.Facoltà = 'Lettere'
+AND E.Voto = (
+    SELECT MAX(Voto)
+    FROM ESAMI E2
+    WHERE E2.Materia = E.Materia
+);
+
+Un tocco di Algebra Lineare
+
+Se volessimo vedere questa operazione in termini di matrici, potremmo immaginare la tabella ESAMI come una matrice sparsa Ms,m​ dove l'elemento è il voto dello studente s nella materia m.
+
+L'operazione che abbiamo fatto equivale a:
+
+    Filtrare le colonne della matrice corrispondenti alla facoltà di Lettere.
+
+    Per ogni vettore colonna (materia), trovare l'indice i tale che vi​=max(v).
+
+Curiosità: Sapevi che...
+
+In SQL, la differenza tra RANK() e DENSE_RANK() è fondamentale se ci sono parità. RANK() lascerebbe un buco nella numerazione (es. 1, 1, 3), mentre DENSE_RANK() no (es. 1, 1, 2). In questo esercizio sono equivalenti poiché cerchiamo solo la posizione 1.

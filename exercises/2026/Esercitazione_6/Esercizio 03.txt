@@ -1,0 +1,67 @@
+Si consideri lo schema di base di dati sulle relazioni:
+– MATERIE (Codice, Facoltà, Denominazione, Professore)
+– STUDENTI (Matricola, Cognome, Nome, Facoltà)
+– PROFESSORI (Matricola, Cognome, Nome)
+– ESAMI (Studente, Materia, Voto, Data)
+– PIANIDISTUDIO (Studente, Materia, Anno)
+
+gli studenti che hanno superato tutti gli esami previsti dal rispettivo piano di studio
+
+1. Algebra Relazionale
+
+In algebra relazionale, il modo più lineare per risolvere questo quesito è ragionare per sottrazione (differenza).
+
+    Tutti gli esami previsti: Troviamo tutte le coppie (Studente,Materia) presenti nei piani di studio.
+    R1=πStudente,Materia​(PIANIDISTUDIO)
+
+    Esami superati: Troviamo le coppie (Studente,Materia) di esami effettivamente sostenuti (assumendo che un esame sia superato se presente in ESAMI con voto ≥18).
+    R2=πStudente,Materia​(σVoto≥18​(ESAMI))
+
+    Esami mancanti: Sottraiamo i superati dai previsti. Questo ci dà gli studenti che hanno almeno un esame ancora da dare.
+    R3=R1−R2
+
+    Risultato finale: Prendiamo tutti gli studenti che hanno un piano di studio e sottraiamo quelli che hanno esami mancanti.
+    Risultato=πStudente​(PIANIDISTUDIO)−πStudente​(R3)
+    
+2. SQL
+
+In SQL possiamo usare la doppia negazione (NOT EXISTS). La logica è: "Seleziona lo studente per il quale non esiste un esame nel suo piano di studio che non sia stato superato".
+SQL
+
+SELECT DISTINCT P1.Studente
+FROM PIANIDISTUDIO P1
+WHERE NOT EXISTS (
+    -- Cerca esami nel piano di studio che non sono stati superati
+    SELECT P2.Materia
+    FROM PIANIDISTUDIO P2
+    WHERE P2.Studente = P1.Studente
+    
+    EXCEPT
+    
+    -- Esami effettivamente superati dallo studente
+    SELECT E.Materia
+    FROM ESAMI E
+    WHERE E.Studente = P1.Studente
+      AND E.Voto >= 18
+);
+
+Alternativa con COUNT (Più intuitiva)
+
+Se assumiamo che un esame non possa essere ripetuto nel piano di studio, possiamo confrontare il numero di esami previsti con quelli superati:
+SQL
+
+SELECT P.Studente
+FROM PIANIDISTUDIO P
+JOIN ESAMI E ON P.Studente = E.Studente AND P.Materia = E.Materia
+WHERE E.Voto >= 18
+GROUP BY P.Studente
+HAVING COUNT(E.Materia) = (
+    SELECT COUNT(*)
+    FROM PIANIDISTUDIO P2
+    WHERE P2.Studente = P.Studente
+);
+
+Un piccolo appunto
+
+    [!NOTE]
+    La versione con NOT EXISTS è generalmente considerata più robusta e accademica perché gestisce correttamente i casi in cui i dati potrebbero essere duplicati o mancanti.

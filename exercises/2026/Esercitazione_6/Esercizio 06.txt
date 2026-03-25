@@ -1,0 +1,65 @@
+Si consideri lo schema di base di dati sulle relazioni:
+– MATERIE (Codice, Facoltà, Denominazione, Professore)
+– STUDENTI (Matricola, Cognome, Nome, Facoltà)
+– PROFESSORI (Matricola, Cognome, Nome)
+– ESAMI (Studente, Materia, Voto, Data)
+– PIANIDISTUDIO (Studente, Materia, Anno)
+
+nome e cognome degli studenti che hanno sostenuto almeno un esame con un professore che ha
+il loro stesso nome proprio
+
+Questa query è molto interessante perché richiede un Self-Join concettuale: stiamo mettendo in relazione due diverse entità (Studenti e Professori) non su una chiave esterna (come la Matricola), ma su un attributo di testo come il Nome.
+
+Ecco la risoluzione nei due linguaggi.
+1. Algebra Relazionale
+
+In Algebra Relazionale, dobbiamo congiungere le tabelle seguendo il percorso dei dati: dallo Studente all'Esame, dall'Esame alla Materia, e dalla Materia al Professore. Infine, applichiamo il filtro sul nome.
+
+Siano:
+
+    S=STUDENTI
+
+    E=ESAMI
+
+    M=MATERIE
+
+    P=PROFESSORI
+
+Il piano d'attacco:
+
+    Mettiamo in relazione lo studente con i suoi esami: S⋈Matricola=Studente​E
+
+    Colleghiamo l'esame alla materia per sapere chi è il professore: ⋯⋈Materia=Codice​M
+
+    Colleghiamo la materia al professore specifico: ⋯⋈Professore=Matricola​P
+
+    Selezioniamo solo le righe dove il nome dello studente coincide con il nome del professore e proiettiamo i dati richiesti.
+
+πS.Nome,S.Cognome​(σS.Nome=P.Nome​(S⋈Matricola=Studente​E⋈Materia=Codice​M⋈Professore=P.Matricola​P))
+2. SQL
+
+In SQL la scrittura è più lineare grazie alla clausola JOIN. Nota come usiamo gli alias (S per Studenti, P per Professori) per distinguere le colonne Nome che hanno lo stesso nome in tabelle diverse.
+SQL
+
+SELECT DISTINCT S.Nome, S.Cognome
+FROM STUDENTI S
+JOIN ESAMI E ON S.Matricola = E.Studente
+JOIN MATERIE M ON E.Materia = M.Codice
+JOIN PROFESSORI P ON M.Professore = P.Matricola
+WHERE S.Nome = P.Nome;
+
+    Nota tecnica: Ho inserito DISTINCT perché se uno studente di nome "Marco" ha sostenuto tre esami con tre professori diversi chiamati "Marco", il suo nome apparirebbe tre volte nei risultati. Il DISTINCT pulisce l'output.
+
+Interpretazione in Algebra Lineare
+
+Se volessimo astrarre questa operazione, potremmo vederla come un'operazione su matrici di incidenza:
+
+    Sia A la matrice Studenti-Esami.
+
+    Sia B la matrice Esami-Professori.
+
+    Il prodotto C=A×B ci dà una matrice Studenti-Professori dove l'elemento cij​ è diverso da zero se lo studente i ha fatto un esame con il professore j.
+
+    Il filtro S.Nome = P.Nome agisce come un operatore di selezione che estrae solo gli indici (i,j) per i quali una funzione "identità del nome" restituisce vero.
+
+In termini di spazi vettoriali, stiamo cercando l'intersezione tra il sottospazio degli "Studenti chiamati X" e il sottospazio dei "Docenti chiamati X", mediata dalla relazione "Esame".

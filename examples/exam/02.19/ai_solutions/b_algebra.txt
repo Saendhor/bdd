@@ -1,0 +1,52 @@
+Si consideri il seguente schema
+	Iscritto (tessera, nome, certificato_medico_scadenza, livello)
+	Istruttore (codice, nome, stipendio_orario, specializzazione)
+	Sala (numero, piano, capienza_massima, ha_aria_condizionata)
+	Corso (id_corso, nome, tipologia, livello_difficoltà)
+	Lezione (id_lezione, corso, istruttore, sala, data_ora, durata, num_prenotazioni)
+	Prenotazione (iscritto, lezione, data_prenotazione, confermata)
+
+Si risponda alla seguente query in algebra relazionale:	
+Trovare il nome dell'istruttore che percepisce lo stipendio orario più basso
+fra tutti gli istruttori che hanno tenuto almeno una lezione in tutte le sale situate al "Piano 1"
+
+--xxx--
+
+Ciao! Certamente, questo è un classico problema di algebra relazionale che combina divisione, join e selezione del minimo.
+
+Per risolverlo in modo chiaro, dobbiamo procedere per step:
+
+    Identificare le sale al "Piano 1".
+
+    Trovare gli istruttori che hanno insegnato in tutte quelle sale (usando l'operatore di divisione).
+
+    Tra questi istruttori, isolare quello con lo stipendio più basso.
+
+Ecco i passaggi formali:
+1. Selezione delle Sale al Piano 1
+
+Per prima cosa, isoliamo i numeri delle sale che si trovano al primo piano.
+R1​=πnumero​(σpiano=′1′​(Sala))
+2. Istruttori e Sale delle Lezioni
+
+Recuperiamo le coppie (istruttore, sala) dalle lezioni effettivamente svolte.
+R2​=πistruttore,sala​(Lezione)
+3. Divisione: Istruttori presenti in tutte le sale del Piano 1
+
+Qui applichiamo l'operatore di divisione (÷). Questo ci restituisce i codici degli istruttori che compaiono in R2​ associati a tutti i numeri di sala presenti in R1​.
+R3​=R2​÷R1​
+4. Recupero dati anagrafici e stipendio
+
+Ora dobbiamo recuperare il nome e lo stipendio orario di questi specifici istruttori facendo un join con la tabella Istruttore.
+R4​=πnome,stipendio_orario​(R3​⋈istruttore=codice​Istruttore)
+5. Calcolo del minimo (Stipendio più basso)
+
+In algebra relazionale non esiste una funzione MIN. Usiamo quindi la tecnica del self-join per trovare chi ha uno stipendio non minimo (ovvero chiunque abbia qualcuno che guadagna meno di lui) e lo sottraiamo dall'insieme totale.
+
+    Trovo gli istruttori di R4​ che hanno uno stipendio maggiore di almeno un altro collega in R4​:
+    Rnon_minimo​=πnome,stipendio_orario​(R4​⋈R4​.stipendio_orario>R4′​.stipendio_orario​ρR4′​​(R4​))
+
+    Sottraggo questi nomi dall'insieme iniziale R4​:
+    Risultato=πnome​(R4​−Rnon_minimo​)
+
+Nota: Se ci fossero più istruttori con lo stesso stipendio minimo (e che soddisfano la condizione delle sale), questa query restituirebbe i nomi di tutti loro.

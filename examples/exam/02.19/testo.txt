@@ -1,0 +1,45 @@
+ESAME C
+Si consideri il seguente schema
+	Iscritto (tessera, nome, certificato_medico_scadenza, livello)
+	Istruttore (codice, nome, stipendio_orario, specializzazione)
+	Sala (numero, piano, capienza_massima, ha_aria_condizionata)
+	Corso (id_corso, nome, tipologia, livello_difficoltà)
+	Lezione (id_lezione, corso, istruttore, sala, data_ora, durata, num_prenotazioni)
+	Prenotazione (iscritto, lezione, data_prenotazione, confermata)
+	
+a) Identificare le chiavi primarie ed esterne
+b) Algebra Relazionale
+	Trovare il nome dell'istruttore che percepisce lo stipendio orario più basso
+	fra tutti gli istruttori che hanno tenuto almeno una lezione in tutte le sale
+	situate al "Piano 1"
+c) SQL
+	Scrivere codice SQL per implementare il controllo che impedisca l'assegnazione di una
+	lezione ad un istruttore se il numero di lezioni tenute dall'istruttore nei 7 giorni
+	precedenti supera la media del numero di lezioni tenute dagli altri istruttori
+	sempre nei 7 giorni precedenti.
+d) Disegnare il diagramma ER dello schema proposto
+g) Si tenga in considerazione l'attributo "numero_prenotazioni" all'interno della relazione Lezioni.
+	Si supponga di avere le seguenti query:
+		1. Prenotazione di nuova ezione (100 volte al giorno)
+		2. Numero di partecipanti di una lezione (5 volte al giorno)
+	Inoltre si hanno i seguenti volumi:
+		* 1000 iscritti
+		* 8 corsi
+		* 240 lezioni
+	Stabilire se convenga o meno mantenere l'attributo ridondante e giustificare la risposta
+	
+h) Si consideri il seguente schedule:
+	w1(x) r2(y) r3(x) w2(x) r1(z) w3(z) r2(z) w1(y)
+		1. Stabilire se è CSR o VSR
+		2. Se pasato ad uno scheduler 2PL causa deadlock?
+
+i) Si consideri il seguente schema R(A, B, C, D, E, F, G) con F = {A -> C, D -> E, CE -> F, G -> A}
+	1. Identificare le chiavi
+	2. Stabilire se è BCNF o 3NF e decomporlo in BCNF se necessario.
+	
+j) Si consideri un file contentente 50.000 record di dimensione 512 byte, memorizzati in blocchi di dimensione 2048 byte in modo unspanned.
+La dimensione del campo chiave primaria V sia pari a 100 byte e la dimensione del puntatore a blocco P sia 8 byte.
+Confrontare fra loro le seguenti soluzioni in termini di numero medio di accessi a blocco:
+	1. Ricerca basata su indice primario costruito sul campo chiave primaria
+	2. Ricerca basata su indice denso cstruito sul campo chiave
+	3. Ricerca basata su un indice multilivello statico ottenuto a partire da un indice primario costruito sul campo chiave primaria

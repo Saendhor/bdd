@@ -1,0 +1,78 @@
+Si consideri lo schema di base di dati sulle relazioni:
+– MATERIE (Codice, Facoltà, Denominazione, Professore)
+– STUDENTI (Matricola, Cognome, Nome, Facoltà)
+– PROFESSORI (Matricola, Cognome, Nome)
+– ESAMI (Studente, Materia, Voto, Data)
+– PIANIDISTUDIO (Studente, Materia, Anno)
+
+gli studenti che hanno in piano di studio solo gli insegnamenti della propria facoltà
+
+1. Algebra Relazionale
+
+Per risolvere il quesito, usiamo la tecnica del complemento:
+
+    Troviamo gli studenti che hanno almeno un insegnamento di una facoltà diversa.
+
+    Sottraiamo questi studenti dall'insieme totale di tutti gli studenti che hanno un piano di studio.
+
+Siano:
+
+    S=STUDENTI
+
+    P=PIANIDISTUDIO
+
+    M=MATERIE
+
+Passaggio 1: Studenti con "infiltrazioni" (materie di altre facoltà)
+Creiamo un insieme Incoerenti unendo lo studente alle materie nel suo piano e filtrando dove la facoltà dello studente è diversa da quella della materia:
+Incoerenti=πMatricola​(σS.Facoltaˋ=M.Facoltaˋ​(S⋈S.Matricola=P.Studente​P⋈P.Materia=M.Codice​M))
+
+Passaggio 2: Risultato finale
+Sottraiamo gli "incoerenti" dall'elenco globale degli studenti che hanno un piano di studio:
+Risultato=πMatricola​(P)−Incoerenti
+2. SQL
+
+In SQL, il modo più intuitivo per scrivere questa logica è usare l'operatore NOT EXISTS. Leggiamo la query come: "Prendi gli studenti per i quali non esiste una materia nel loro piano di studio la cui facoltà sia diversa dalla loro".
+SQL
+
+SELECT S.Matricola, S.Cognome, S.Nome
+FROM STUDENTI S
+WHERE EXISTS (SELECT 1 FROM PIANIDISTUDIO P WHERE P.Studente = S.Matricola) -- Deve avere un piano
+AND NOT EXISTS (
+    SELECT 1
+    FROM PIANIDISTUDIO P
+    JOIN MATERIE M ON P.Materia = M.Codice
+    WHERE P.Studente = S.Matricola
+    AND M.Facoltà <> S.Facoltà
+);
+
+Approccio Alternativo (Conteggio)
+
+Un altro modo elegante consiste nel confrontare il numero totale di esami nel piano con il numero di esami che appartengono alla facoltà corretta:
+SQL
+
+SELECT S.Matricola, S.Cognome, S.Nome
+FROM STUDENTI S
+JOIN PIANIDISTUDIO P ON S.Matricola = P.Studente
+JOIN MATERIE M ON P.Materia = M.Codice
+GROUP BY S.Matricola, S.Cognome, S.Nome, S.Facoltà
+HAVING COUNT(*) = SUM(CASE WHEN M.Facoltà = S.Facoltà THEN 1 ELSE 0 END);
+
+In questo caso, la condizione HAVING assicura che il totale delle righe coincida con quelle "corrette".
+Interpretazione in Algebra Lineare
+
+Se immaginiamo una Matrice di Appartenenza Studente-Facoltà (A) e una Matrice Piano di Studio Studente-Materia (P), questa query sta cercando gli studenti i cui vettori riga in P hanno componenti diverse da zero solo in corrispondenza delle colonne (materie) che appartengono alla loro stessa categoria in A.
+
+È essenzialmente un controllo di ortogonalità: il piano di studio dello studente deve essere ortogonale al set di tutte le materie che non appartengono alla sua facoltà.
+
+La mia soluzione rifinita (in teoria)
+
+SELECT S.Matricola, S.Cognome, S.Nome
+FROM STUDENTI S
+WHERE NOT EXISTS (
+    SELECT *
+    FROM PIANIDISTUDIO PDS
+    JOIN MATERIE M ON PDS.Materia = M.Codice
+    WHERE PDS.Studente = S.Matricola -- Qui colleghiamo la subquery allo studente esterno
+    AND M.Facoltà <> S.Facoltà     -- Cerchiamo materie di facoltà diverse
+);
