@@ -1,0 +1,101 @@
+Si consideri il seguente schedule
+S = r3(y), w1(y), r1(x), w5(x), r2(z), w1(t), r3(z), w4(x), r5(t), w5(z), r4(t), w2(z)
+
+1) Stabilire se è VSR o CSR
+2) Se passati ad un 2PL producono deadlock?
+
+Lo schedule S è composto dalle seguenti operazioni:
+T1​:{w1​(y),r1​(x),w1​(t)}
+T2​:{r2​(z),w2​(z)}
+T3​:{r3​(y),r3​(z)}
+T4​:{w4​(x),r4​(t)}
+T5​:{w5​(x),r5​(t),w5​(z)}
+1) Analisi CSR e VSR
+
+Per determinare se è Conflict Serializable (CSR), dobbiamo costruire il Graffo dei Conflitti (Precedence Graph). Tracciamo un arco Ti​→Tj​ se Ti​ esegue un'operazione che va in conflitto con una successiva di Tj​ sullo stesso dato.
+
+Conflitti individuati:
+
+    Su y: r3​(y)→w1​(y) (Arco T3​→T1​)
+
+    Su x: r1​(x)→w5​(x) (Arco T1​→T5​)
+
+    Su x: w5​(x)→w4​(x) (Arco T5​→T4​)
+
+    Su z: r2​(z)→w5​(z) (Arco T2​→T5​)
+
+    Su z: r3​(z)→w5​(z) (Arco T3​→T5​)
+
+    Su z: w5​(z)→w2​(z) (Arco T5​→T2​)
+
+    Su t: w1​(t)→r5​(t) (Arco T1​→T5​)
+
+    Su t: w1​(t)→r4​(t) (Arco T1​→T4​)
+
+Verifica Cicli:
+Analizzando gli archi:
+
+    T3​→T1​
+
+    T1​→T5​
+
+    T5​→T2​
+
+    T2​→T5​ <-- CICLO!
+
+Esiste un ciclo tra T2​ e T5​ (r2​(z) viene prima di w5​(z), ma w5​(z) viene prima di w2​(z)).
+
+    Conclusione CSR: Lo schedule non è CSR perché il grafo dei conflitti presenta un ciclo.
+
+Verifica VSR (View Serializability):
+Uno schedule non CSR può essere VSR solo se ci sono "scritture cieche" (blind writes). Qui non ne abbiamo di significative che risolvano il ciclo. Tuttavia, la regola rapida è: se non è CSR e non ci sono anomalie particolari che lo rendano View-Equivalente a uno seriale, non è VSR. In questo caso, il conflitto su z tra T2​ e T5​ è una dipendenza diretta che impedisce qualsiasi ordinamento seriale equivalente.
+
+    Conclusione VSR: Lo schedule non è VSR.
+
+2) Analisi 2PL (Two-Phase Locking) e Deadlock
+
+Il protocollo 2PL richiede che una transazione ottenga un lock prima di operare e non ne rilasci nessuno finché non ha acquisito tutti quelli necessari (fase di crescita).
+
+Vediamo l'evoluzione dei lock temporali:
+
+    r3​(y): T3​ ottiene SL3​(y).
+
+    w1​(y): T1​ chiede XL1​(y). T1​ si blocca perché T3​ ha il lock su y.
+
+    r1​(x): Bloccata (fa parte di T1​).
+
+    w5​(x): T5​ ottiene XL5​(x).
+
+    r2​(z): T2​ ottiene SL2​(z).
+
+    w1​(t): Bloccata (T1​).
+
+    r3​(z): T3​ ottiene SL3​(z).
+
+    w4​(x): T4​ chiede XL4​(x). T4​ si blocca perché T5​ ha il lock su x.
+
+    r5​(t): T5​ ottiene SL5​(t).
+
+    w5​(z): T5​ chiede XL5​(z). T5​ si blocca perché T2​ e T3​ hanno SL su z.
+
+    r4​(t): Bloccata (T4​).
+
+    w2​(z): T2​ chiede XL2​(z) (upgrade). T2​ si blocca perché T3​ ha SL3​(z).
+
+Situazione delle attese (Wait-for Graph):
+
+    T1​ aspetta T3​ (per y)
+
+    T4​ aspetta T5​ (per x)
+
+    T5​ aspetta T2​ e T3​ (per z)
+
+    T2​ aspetta T3​ (per z)
+
+In questo scenario specifico, se T3​ finisce e rilascia i lock, le altre potrebbero procedere. Tuttavia, guardando lo schedule originale, T3​ non rilascia i lock fino alla fine delle sue operazioni.
+
+C'è un deadlock?
+Nello schedule fornito, non si chiude un ciclo di attesa immediato tra transazioni attive se ipotizziamo che T3​ possa terminare. Ma attenzione: se T2​ aspetta l'upgrade di z e T5​ aspetta T2​ per lo stesso dato, e T3​ tiene ancora il lock, si crea una coda di blocco.
+Nello specifico: T2​ aspetta T3​ e T5​ aspetta T2​. Non c'è un ciclo (es. T3​ non aspetta nessuno).
+
+    Risultato 2PL: Lo schedule non produce deadlock, ma subisce forti rallentamenti (molte transazioni vengono messe in coda in attesa che T3​ rilasci i lock).

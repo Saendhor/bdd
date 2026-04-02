@@ -1,0 +1,29 @@
+è corretto dire che se uno scheduler è CSR allora è anche VSR?
+
+Assolutamente sì, è corretto.
+
+In informatica, esiste una gerarchia precisa tra le classi di serializzabilità. La relazione è di inclusione: CSR⊂VSR. Questo significa che:
+
+    Se uno schedule è CSR, allora è sempre VSR.
+
+    Se uno schedule è VSR, non è detto che sia anche CSR.
+
+Perché accade questo?
+
+Il motivo risiede nella severità dei vincoli:
+
+    CSR (Conflict Serializability): Si basa sull'ordine dei conflitti atomici (le singole coppie di operazioni). È un criterio molto rigido: se inverti l'ordine di due operazioni in conflitto, rompi la serializzabilità. Il grafo dei conflitti non ammette eccezioni.
+
+    VSR (View Serializability): Si basa sull'effetto finale e sul flusso dei dati. È più "tollerante" perché non si preoccupa dell'ordine di ogni singolo conflitto, a patto che:
+
+        I valori letti dalle transazioni siano gli stessi.
+
+        Il valore finale scritto nel database sia lo stesso.
+
+L'eccezione che fa la differenza: le "Blind Writes"
+
+Come abbiamo visto, la VSR permette di ignorare alcuni conflitti che creerebbero cicli nel grafo (rendendo lo schedule non CSR), purché quei conflitti riguardino scritture che vengono poi "coperte" da altre scritture senza essere mai state lette da nessuno.
+
+    In sintesi: La CSR è una condizione sufficiente ma non necessaria per la VSR.
+
+    È un po' come dire: "Se un veicolo è una Ferrari, allora è sicuramente un'automobile (CSR → VSR). Ma se è un'automobile, non è detto che sia una Ferrari (VSR → CSR)".

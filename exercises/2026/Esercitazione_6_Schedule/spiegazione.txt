@@ -1,0 +1,54 @@
+Certamente! Entriamo nel dettaglio di questi due concetti fondamentali della gestione delle transazioni nei database. Entrambi servono a garantire l'isolamento: vogliamo che l'esecuzione di più transazioni contemporanee produca lo stesso risultato che avremmo se le eseguissimo una dopo l'altra (serialmente).
+1. CSR (Conflict Serializability)
+
+Uno schedule è Conflict Serializable se può essere trasformato in uno schedule seriale (dove le transazioni non si sovrappongono) scambiando tra loro solo operazioni consecutive che non sono in conflitto.
+
+Due operazioni sono in conflitto se:
+
+    Appartengono a transazioni diverse.
+
+    Operano sullo stesso dato (es. lo stesso record x).
+
+    Almeno una delle due è una scrittura (w).
+
+Il Grafo delle Precedenze
+
+Il modo più rapido per capire se uno schedule è CSR è costruire il grafo:
+
+    I nodi sono le transazioni (T1​,T2​,…).
+
+    Un arco va da Ti​ a Tj​ se Ti​ compie un'operazione che va in conflitto con una successiva di Tj​.
+
+    Regola d'oro: Se il grafo è aciclico (non ci sono cicli), lo schedule è CSR. Se c'è un ciclo, non lo è.
+
+2. VSR (View Serializability)
+
+La View Serializability è una condizione più "rilassata" (e potente) rispetto alla CSR. Uno schedule è VSR se è View-Equivalente a uno schedule seriale.
+
+Per essere View-Equivalente, devono essere rispettate tre condizioni rispetto alla lettura e scrittura dei dati:
+
+    Initial Read: Se Ti​ legge il valore iniziale di x nello schedule S, deve leggere il valore iniziale di x anche nello schedule seriale S′.
+
+    Dependent Read: Se Ti​ legge un valore di x scritto da Tj​ in S, deve farlo anche in S′.
+
+    Final Write: Chi scrive l'ultimo valore di un dato x in S, deve essere lo stesso che lo scrive in S′.
+
+Differenza chiave: Le Scritture Cieche (Blind Writes)
+
+Perché uno schedule sia VSR ma non CSR, devono esserci delle blind writes (scritture effettuate senza aver prima letto il dato).
+
+    CSR guarda l'ordine cronologico dei conflitti (molto severo).
+
+    VSR guarda solo "chi legge da chi" e "chi lascia il database per ultimo", ignorando l'ordine di alcuni conflitti intermedi se non influenzano il risultato finale.
+
+Riassunto e Gerarchia
+
+Tutti gli schedule CSR sono anche VSR, ma non tutti i VSR sono CSR. Possiamo visualizzarli come cerchi concentrici:
+
+    Seriali: Le transazioni sono una dopo l'altra (il massimo della sicurezza, il minimo della performance).
+
+    CSR: Quasi tutti i database commerciali usano tecniche per garantire la CSR (come il 2PL) perché è facile da calcolare.
+
+    VSR: È molto difficile (computazionalmente parlando, è un problema NP-completo) da verificare per un database in tempo reale, quindi è più un concetto teorico.
+
+    In sintesi: Se il grafo dei conflitti ha un ciclo, non è CSR. Se in quel ciclo ci sono "scritture cieche" che non rompono le tre regole della View-Equivalence, potrebbe ancora essere VSR.

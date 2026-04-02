@@ -1,0 +1,59 @@
+il "trucco" per avere uno schedule VSR ma non CSR è la presenza delle Blind Writes (scritture cieche), ovvero quando una transazione scrive un dato senza averlo prima letto.
+
+Ecco un esempio classico con tre transazioni T1​,T2​,T3​ che operano sullo stesso dato x:
+Lo Schedule S
+S=w1​(x),w2​(x),w3​(x)
+
+Potrebbe sembrare strano, ma analizziamolo:
+1. Perché NON è CSR?
+
+Costruiamo il grafo dei conflitti:
+
+    w1​(x) seguito da w2​(x) crea un conflitto T1​→T2​.
+
+    w2​(x) seguito da w3​(x) crea un conflitto T2​→T3​.
+
+    w1​(x) seguito da w3​(x) crea un conflitto T1​→T3​.
+
+Fin qui tutto bene, il grafo è T1​→T2​→T3​. Questo schedule è seriale, quindi è CSR.
+
+Ma cambiamo l'ordine in questo modo:
+S′=w1​(x),w2​(x),w1​(x),w3​(x) (Esempio teorico con scritture multiple)
+
+Oppure, prendiamo l'esempio standard di Thomas:
+S=w1​(x),w2​(x),w3​(x)
+
+Se lo confrontiamo con lo schedule seriale Sseriale​=T1​,T2​,T3​, l'ordine dei conflitti è rispettato.
+
+Ma guarda cosa succede se inseriamo una lettura:
+S=r1​(x),w2​(x),w1​(x)
+
+    T1​ legge x (r1​(x))
+
+    T2​ scrive x (w2​(x)) → Arco T1​→T2​ (confronto r1​ con w2​)
+
+    T1​ scrive x (w1​(x)) → Arco T2​→T1​ (confronto w2​ con w1​)
+
+Il grafo ha un ciclo T1​↔T2​. Quindi non è CSR.
+2. Perché è VSR?
+
+Per essere VSR, lo schedule deve essere "equivalente in vista" a uno schedule seriale. Proviamo a confrontarlo con lo schedule seriale S∗=(T2​,T1​).
+
+Controlliamo le tre regole della View-Equivalence tra S e S∗:
+
+    Initial Read: In S, T1​ legge x per primo. In S∗=(T2​,T1​), se T2​ non legge nulla e T1​ legge x dopo che T2​ ha scritto, la regola potrebbe saltare. Ma se T2​ fa una Blind Write (scrive senza leggere), e l'unico a leggere il valore iniziale è T1​, la regola è soddisfatta.
+
+    Dependent Read: Nessuno legge da nessun altro in questo esempio semplificato. Regola soddisfatta.
+
+    Final Write: In S, l'ultima scrittura è di T1​ (w1​(x)). Nello schedule seriale S∗=(T2​,T1​), l'ultima scrittura è sempre di T1​. Regola soddisfatta.
+
+Siccome l'effetto finale sul database è lo stesso (il valore finale di x è quello scritto da T1​) e le letture iniziali coincidono, lo schedule è VSR.
+In sintesi
+
+Lo schedule è VSR ma non CSR perché:
+
+    Conflict: L'ordine delle operazioni w2​ e w1​ è invertito rispetto a un'esecuzione seriale "ideale", creando un ciclo nel grafo.
+
+    View: Poiché T2​ ha scritto un valore che è stato immediatamente sovrascritto da T1​ senza che nessuno lo leggesse nel mezzo, l'azione di T2​ è diventata "irrilevante" per lo stato finale e per le altre transazioni.
+
+È come se T2​ avesse scritto su una lavagna e T1​ avesse cancellato e riscritto subito dopo: nessuno ha visto cosa aveva scritto T2​, quindi ai fini del risultato finale è come se non fosse successo o fosse successo prima.
