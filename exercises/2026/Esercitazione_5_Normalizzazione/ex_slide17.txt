@@ -1,0 +1,83 @@
+Si consideri lo schema relazionale R(A,B,C,D,E) e il seguente insieme di
+dipendenze funzionali F ={A→B, B→C, AC→D, D→E}
+- Trovare le chiavi
+- Decomporre lo schema in BCNF
+
+1. Trovare le chiavi
+
+Dobbiamo trovare il set minimo di attributi che, tramite le dipendenze, ci permette di ricavare {A,B,C,D,E}.
+
+    Analisi degli attributi: L'attributo A non compare mai a destra di nessuna dipendenza. Questo significa che A deve essere presente in ogni chiave.
+
+    Calcoliamo la chiusura di {A}:
+
+        {A}+→ (per A→B) →{A,B}
+
+        {A,B}+→ (per B→C) →{A,B,C}
+
+        {A,B,C}+→ (per AC→D) →{A,B,C,D}
+
+        {A,B,C,D}+→ (per D→E) →{A,B,C,D,E}
+
+Poiché la chiusura di {A} contiene tutti gli attributi, {A} è l'unica chiave candidata della relazione.
+2. Decomposizione in BCNF
+
+Una relazione è in BCNF se per ogni dipendenza X→Y, X è una superchiave.
+Qui la chiave è A. Verifichiamo le dipendenze:
+
+    A→B: A è chiave (OK).
+
+    B→C: B non è chiave (Violazione).
+
+    AC→D: AC è una superchiave perché contiene A (OK).
+
+    D→E: D non è chiave (Violazione).
+
+Dobbiamo decomporre applicando l'algoritmo ricorsivo.
+Step 1: Gestiamo la violazione B→C
+
+Dividiamo R in due relazioni basandoci sulla dipendenza che viola la forma normale:
+
+    R1​(B,C): Qui la chiave è B. Questa relazione è in BCNF.
+
+    R2​(A,B,D,E): Eliminiamo C e teniamo il resto.
+
+Step 2: Analisi di R2​(A,B,D,E)
+
+In R2​, le dipendenze rimaste (o derivate) sono:
+
+    A→B
+
+    AB→D (derivata da AC→D dato che B→C) → in realtà semplificabile in A→D
+
+    D→E
+
+La chiave di R2​ è sempre A.
+
+    A→B e A→D: OK (A è chiave).
+
+    D→E: Violazione (D non è chiave).
+
+Step 3: Gestiamo la violazione D→E in R2​
+
+Dividiamo R2​ in:
+
+    R3​(D,E): Qui la chiave è D. Questa relazione è in BCNF.
+
+    R4​(A,B,D): Eliminiamo E e teniamo il resto.
+
+        In R4​, le dipendenze sono A→B e A→D. La chiave è A. Poiché tutte le parti sinistre sono la chiave, R4​ è in BCNF.
+
+Risultato Finale (Schema Decomposto)
+
+Lo schema finale in BCNF è composto dalle seguenti relazioni:
+
+    R1​(B,C) con chiave {B}
+
+    R3​(D,E) con chiave {D}
+
+    R4​(A,B,D) con chiave {A}
+
+Una piccola nota sulla dipendenza AC→D
+
+Nella decomposizione BCNF, la dipendenza AC→D sembra "sparita". Tuttavia, poiché abbiamo A→B in R4​ e B→C in R1​, l'informazione di C è legata ad A tramite B. In BCNF è frequente non riuscire a preservare tutte le dipendenze funzionali originali (a differenza della 3NF).

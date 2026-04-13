@@ -1,0 +1,95 @@
+Data la relazione R(A, B, C, D, E) e le dipendenze funzionali A → B, BC
+→ D e DE → A,
+• determinare le chiavi di R;
+• specificare se R è in 3NF o in Boyce-Codd, motivando la risposta.
+• Verificare se lo schema R è in BCNF ed eventualmente decomporlo
+
+1. Determinazione delle chiavi di R
+
+Per trovare le chiavi, dobbiamo identificare i set di attributi la cui chiusura (indicata con X+) contiene tutti gli attributi della relazione {A,B,C,D,E}.
+
+    Osservazione preliminare: L'attributo C e l'attributo E non compaiono mai a destra di nessuna dipendenza funzionale. Questo significa che devono necessariamente far parte di ogni chiave.
+
+Proviamo a calcolare la chiusura di set che includono C ed E:
+
+    Chiusura di {A,C,E}:
+
+        {A,C,E}+→ (per A→B) →{A,B,C,E}
+
+        {A,B,C,E}+→ (per BC→D) →{A,B,C,D,E}
+
+        Risultato: {A,C,E} è una chiave.
+
+    Chiusura di {D,C,E}:
+
+        {D,C,E}+→ (per DE→A) →{A,C,D,E}
+
+        {A,C,D,E}+→ (per A→B) →{A,B,C,D,E}
+
+        Risultato: {D,C,E} è una chiave.
+
+    Chiusura di {B,C,E}:
+
+        {B,C,E}+→ Non genera nuovi attributi oltre a B,C,E. Non è una chiave.
+
+Le chiavi candidate sono: K1​={A,C,E} e K2​={D,C,E}.
+
+2. Verifica delle Forme Normali (3NF e BCNF)
+
+Gli attributi primi (che appartengono a una chiave) sono: {A,C,D,E}.
+L'unico attributo non primo è: {B}.
+Boyce-Codd Normal Form (BCNF)
+
+Una relazione è in BCNF se per ogni dipendenza funzionale X→Y non banale, X è una superchiave.
+
+    A→B: A non è una superchiave (mancano C ed E). La relazione NON è in BCNF.
+
+    BC→D: BC non è una superchiave.
+
+    DE→A: DE non è una superchiave.
+
+Terza Forma Normale (3NF)
+
+Una relazione è in 3NF se per ogni X→Y non banale:
+
+    X è una superchiave, OPPURE
+
+    Y è un attributo primo.
+
+Analizziamo le dipendenze:
+
+    A→B: A non è superchiave e B non è primo. La relazione NON è in 3NF.
+
+    Conclusione: La relazione si ferma alla Seconda Forma Normale (2NF), poiché B dipende parzialmente da una parte della chiave K1​ (infatti A⊂{A,C,E}).
+
+3. Decomposizione in BCNF
+
+Per decomporre in BCNF, usiamo la dipendenza che viola la forma normale. Usiamo A→B.
+
+Step 1: Decomposizione con A→B
+Creiamo due relazioni:
+
+    R1​(A,B) con dipendenza A→B. (È in BCNF perché A è chiave).
+
+    R2​(A,C,D,E) con le dipendenze rimanenti proiettate: DE→A (e indirettamente A,C→D se esistesse, ma qui abbiamo rimosso B).
+
+Step 2: Verifica di R2​(A,C,D,E)
+In R2​, la chiave è {D,C,E} e {A,C,E}.
+
+    La dipendenza DE→A viola ancora la BCNF? Sì, perché DE non è una superchiave di R2​ (manca C).
+
+Step 3: Decomposizione di R2​ con DE→A
+
+    R3​(D,E,A) con dipendenza DE→A. (È in BCNF perché DE è chiave).
+
+    R4​(D,E,C) con nessuna dipendenza funzionale. (È in BCNF).
+
+Schema Finale decomposto:
+
+    R1​(A,B)
+
+    R3​(D,E,A)
+
+    R4​(D,E,C)
+
+Nota: In questa decomposizione abbiamo perso la dipendenza BC→D (non è preservata), il che è un classico compromesso quando si forza la BCNF invece della 3NF.

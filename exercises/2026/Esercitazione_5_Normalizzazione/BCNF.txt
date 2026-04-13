@@ -1,0 +1,49 @@
+La BCNF (Boyce-Codd Normal Form) è una forma normale della teoria dei database che potremmo definire come una versione "più severa" della Terza Forma Normale (3NF).
+
+Per capire la BCNF, immagina che il suo obiettivo principale sia eliminare ogni forma di ridondanza legata alle dipendenze funzionali.
+La Regola d'Oro
+
+Una relazione R è in BCNF se, per ogni dipendenza funzionale non banale X→Y, l'insieme di attributi X è una superchiave.
+
+In parole povere: tutto deve dipendere dalla chiave, da nient'altro che dalla chiave!
+La differenza cruciale tra 3NF e BCNF
+
+Ricordi la 3NF? Essa permetteva un'eccezione: una dipendenza X→Y era accettabile anche se X non era una chiave, a patto che Y fosse un attributo primo (cioè parte di una chiave).
+
+La BCNF elimina questa eccezione. Non importa se Y è un attributo primo o meno: se X non è una superchiave, quella dipendenza crea problemi e la tabella va divisa.
+Un esempio pratico per capire il problema
+
+Immagina una tabella che registra le consulenze in uno studio medico:
+Schema: Consulenza(Paziente, Specializzazione, Medico)
+
+Supponiamo che:
+
+    Un medico lavori in una sola specializzazione (es. il Dott. Rossi fa solo Cardiologia): Medico → Specializzazione.
+
+    Un paziente può vedere più medici, ma per ogni specializzazione ha un solo medico assegnato: {Paziente, Specializzazione} → Medico.
+
+1. Troviamo le chiavi
+
+L'unica chiave candidata è {Paziente, Specializzazione}.
+Tuttavia, poiché Medico → Specializzazione, anche {Paziente, Medico} è una chiave.
+2. È in 3NF?
+
+Sì. Prendiamo la dipendenza Medico → Specializzazione. Medico non è una chiave, ma Specializzazione è un attributo primo (fa parte della prima chiave). Quindi la 3NF è soddisfatta.
+3. Perché non è in BCNF?
+
+Perché nella dipendenza Medico → Specializzazione, il lato sinistro (Medico) non è una superchiave.
+
+Il problema reale: Se il Dott. Rossi (Cardiologo) non ha ancora pazienti, non posso inserire nel database che lui è un cardiologo senza inventarmi un paziente "fittizio". Oppure, se l'unico paziente del Dott. Rossi viene cancellato, perdo l'informazione che il Dott. Rossi è un cardiologo. Questa è una anomalia di aggiornamento.
+Come si risolve? (Decomposizione)
+
+Per portare lo schema in BCNF, "stacchiamo" la dipendenza problematica in una nuova tabella:
+
+    Tabella Medici: (Medico, Specializzazione) -> Qui Medico è chiave. OK!
+
+    Tabella Appuntamenti: (Paziente, Medico) -> Qui la chiave è la coppia. OK!
+
+In sintesi:
+
+    3NF: È un compromesso. È ottima perché preserva sempre tutte le dipendenze funzionali, ma può lasciare qualche piccola ridondanza.
+
+    BCNF: È la perfezione formale. Elimina tutte le ridondanze residue, ma a volte "rompe" alcune dipendenze funzionali (come nell'esempio sopra, dove non possiamo più controllare facilmente che un paziente abbia un solo medico per specializzazione senza fare un Join).

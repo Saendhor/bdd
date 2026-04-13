@@ -1,0 +1,58 @@
+Certamente! Se la BCNF è la "perfezione assoluta", la Terza Forma Normale (3NF) è il "giusto compromesso". È la forma normale più utilizzata nella pratica perché garantisce l'assenza di gran parte delle ridondanze, ma a differenza della BCNF, ti permette di preservare sempre tutte le dipendenze funzionali.
+La Definizione
+
+Una relazione è in 3NF se è in 2NF (ovvero non ci sono dipendenze parziali dalla chiave) e per ogni dipendenza funzionale non banale X→Y, è soddisfatta almeno una di queste condizioni:
+
+    X è una superchiave (la dipendenza è "diretta" dalla chiave).
+
+    Y è un attributo primo (ogni attributo in Y fa parte di almeno una chiave candidata).
+
+    In parole povere: la 3NF vieta le dipendenze transitive. Non puoi avere un attributo che dipende dalla chiave "passando" per un altro attributo non chiave.
+
+Il concetto di Dipendenza Transitiva
+
+Immagina questa tabella:
+Studenti(Matricola, Nome, CAP, Città)
+
+    La chiave è Matricola.
+
+    Esistono queste dipendenze:
+
+        Matricola → Nome (OK, X è chiave)
+
+        Matricola → CAP (OK, X è chiave)
+
+        CAP → Città (Attenzione!)
+
+Qui abbiamo una dipendenza transitiva: Matricola → CAP → Città.
+Matricola determina la Città solo perché determina il CAP.
+Perché questo è un problema?
+
+    Ridondanza: Se 1000 studenti vivono nello stesso CAP, scriverai il nome della città 1000 volte.
+
+    Anomalia di aggiornamento: Se il CAP 90100 cambia nome da "Palermo" a "Palermo Centro", devi aggiornare 1000 righe.
+
+    Anomalia di inserimento: Non puoi registrare che il CAP 20100 corrisponde a "Milano" finché non hai almeno uno studente che ci abita.
+
+Come si risolve?
+
+Si "spezza" la catena transitiva creando tabelle separate:
+
+    Tabella Studenti: (Matricola, Nome, CAP)
+
+    Tabella CodiciPostali: (CAP, Città)
+
+Ora, in entrambe le tabelle, ogni determinante (X) è una chiave.
+Perché la 3NF è "più buona" della BCNF?
+
+Torniamo all'eccezione della 3NF: "...oppure Y è un attributo primo".
+
+Questa clausola salva quelle situazioni in cui hai chiavi che si sovrappongono (come nel problema che abbiamo risolto prima con {A,C,E}, {D,C,E} e {B,C,E}).
+La 3NF dice: "Se l'informazione che stai cercando di proteggere (Y) fa comunque parte di una chiave, allora la ridondanza è minima e accettabile, perché ci permette di mantenere intatti tutti i vincoli del database senza dover fare join complicati".
+Riassunto visivo
+
+    1NF: Niente tabelle dentro tabelle (valori atomici).
+
+    2NF: Niente dipendenze da "pezzi" della chiave (se la chiave è composta).
+
+    3NF: Niente dipendenze transitive (niente "A determina B che determina C").
