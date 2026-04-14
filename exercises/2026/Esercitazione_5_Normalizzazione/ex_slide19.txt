@@ -1,0 +1,104 @@
+Si consideri lo schema di relazione R(A, B, C, D, E, F, G, H, I, J) ed il
+relativo insieme di dipendenze funzionali F = {ABD → E, AB → G, B →
+F, C → J, CJ → I, G → H}.
+• Determinare l’insieme delle chiavi di R.
+• Decomporlo in BCNF
+
+1. Determinazione delle Chiavi di R
+
+Per trovare le chiavi, dobbiamo prima osservare quali attributi non compaiono mai a destra delle dipendenze funzionali (F). Questi attributi devono far parte di ogni chiave.
+
+    Attributi a sinistra: A, B, C, D, G, J
+
+    Attributi a destra: E, G, F, J, I, H
+
+    Attributi mai presenti a destra: {A, B, C, D}
+
+Calcoliamo la chiusura dell'insieme K={A,B,C,D} (indicata come K+) per vedere se riesce a determinare tutti gli altri attributi:
+
+    K={A,B,C,D}
+
+    Dato ABD→E, aggiungiamo E: {A,B,C,D,E}
+
+    Dato AB→G, aggiungiamo G: {A,B,C,D,E,G}
+
+    Dato B→F, aggiungiamo F: {A,B,C,D,E,G,F}
+
+    Dato G→H, aggiungiamo H: {A,B,C,D,E,G,F,H}
+
+    Dato C→J, aggiungiamo J: {A,B,C,D,E,G,F,H,J}
+
+    Dato CJ→I, aggiungiamo I: {A,B,C,D,E,G,F,H,J,I}
+
+Poiché {A,B,C,D}+ contiene tutti gli attributi dello schema, {A,B,C,D} è l'unica chiave candidata.
+2. Decomposizione in BCNF (Boyce-Codd Normal Form)
+
+Una relazione è in BCNF se, per ogni dipendenza funzionale X→Y non banale, X è una superchiave.
+Nel nostro caso, nessuna delle dipendenze in F ha una superchiave a sinistra. Dobbiamo decomporre.
+Passaggio 1: Trattiamo B→F
+
+B non è superchiave. Decomponiamo R in:
+
+    R1 (B, F) — In BCNF perché B è chiave.
+
+    R2 (A, B, C, D, E, G, H, I, J) — Resto degli attributi.
+
+Passaggio 2: Analizziamo R2 con AB→G
+
+In R2, AB non è superchiave (mancano C e D).
+
+    R3 (A, B, G) — In BCNF perché AB è chiave.
+
+    R4 (A, B, C, D, E, H, I, J) — Resto degli attributi.
+
+Passaggio 3: Analizziamo R3 (o le dipendenze residue) con G→H
+
+Notiamo che G→H ora "vive" dove c'è G. Possiamo staccarla da dove si trova (inizialmente era legata a R2, ora a ciò che deriva da G):
+
+    R5 (G, H) — In BCNF (G è chiave).
+
+    R3' (A, B, G) — Resta così, ma H è uscito.
+
+Passaggio 4: Analizziamo R4 con C→J
+
+C non è superchiave in R4.
+
+    R6 (C, J) — In BCNF (C è chiave).
+
+    R7 (A, B, C, D, E, I) — Resto degli attributi.
+
+Passaggio 5: Analizziamo R7 con CJ→I
+
+Qui c'è un dettaglio: J non è più in R7, ma abbiamo la dipendenza C→J in R6. Per l'attributo I, dato che C→J e CJ→I, per transitività abbiamo C→I.
+
+    R8 (C, I) — In BCNF (C è chiave).
+
+    R9 (A, B, C, D, E) — Resto degli attributi.
+
+Passaggio 6: Analizziamo R9 con ABD→E
+
+In R9, la chiave è {A,B,C,D}. La dipendenza ABD→E viola la BCNF perché ABD non è superchiave (manca C).
+
+    R10 (A, B, D, E) — In BCNF (ABD è chiave).
+
+    R11 (A, B, C, D) — Contiene solo la chiave originale.
+
+Risultato Finale (Decomposizione)
+
+Lo schema finale decomposto in BCNF è composto dalle seguenti relazioni:
+
+    R1 (B, F)
+
+    R3 (A, B, G)
+
+    R5 (G, H)
+
+    R6 (C, J)
+
+    R8 (C, I)
+
+    R10 (A, B, D, E)
+
+    R11 (A, B, C, D)
+
+    Nota: Questa decomposizione garantisce la BCNF e la conservazione dei dati (lossless join), anche se, come spesso accade con la BCNF, alcune dipendenze funzionali originali potrebbero richiedere un "join" per essere verificate (non è detto che sia dependency preserving).

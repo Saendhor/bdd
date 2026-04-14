@@ -1,0 +1,7 @@
+R(A, B, C, D, E, F, G, H)
+
+F = {A -> B, ABCD -> E, EF -> GH, ACDF -> EG}
+
+1) Trova le chiavi
+2) Stabilire se è 3NF o BCNF
+3) Decomporlo in BCNF
