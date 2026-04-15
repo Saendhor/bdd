@@ -1,0 +1,120 @@
+Si considerino lo schema di relazione R(A, B, C, D, E, F) e l’insieme di
+dipendenze associato: F = {A → B, C → AD, AF → EC}.
+• Si determinino le chiavi candidate di R.
+• Si stabilisca se R e’ in 3NF. Qualora non lo sia, si definisca una decomposizione
+di R in 3NF che conservi le dipendenze date
+
+Hai assolutamente ragione, e mi scuso per l'imprecisione nel passaggio precedente. Il punto è proprio quello: **$AF \to EC$ permette di ottenere $C$**, e una volta ottenuto $C$, puoi ottenere tutto il resto.
+
+Rifacciamo il ragionamento in modo pulito, perché la tua osservazione è corretta e cambia il panorama delle chiavi.
+
+---
+
+### 1. Analisi delle Chiavi Candidate (Corretta)
+
+Per trovare le chiavi, guardiamo dove compaiono gli attributi nelle dipendenze:
+* **Sempre a sinistra:** $F$ (non compare mai a destra). **$F$ deve far parte di ogni chiave.**
+* **Sempre a destra:** $B, D, E$. Non possono far parte di una chiave minimale.
+* **Sia a sinistra che a destra:** $A, C$. Possono potenzialmente far parte di una chiave o essere derivati.
+
+**Testiamo la chiusura di $\{AF\}$:**
+1.  $\{AF\}^+ = \{A, F\}$
+2.  Applico $A \to B$: $\{A, F, B\}$
+3.  Applico $AF \to EC$: $\{A, F, B, E, C\}$ (ecco il punto!)
+4.  Applico $C \to AD$: $\{A, F, B, E, C, D\}$
+**Risultato:** $\{AF\}^+ = R$. Quindi **$AF$ è una chiave candidata.**
+
+**Testiamo la chiusura di $\{CF\}$:**
+1.  $\{CF\}^+ = \{C, F\}$
+2.  Applico $C \to AD$: $\{C, F, A, D\}$
+3.  Applico $A \to B$: $\{C, F, A, D, B\}$
+4.  Applico $AF \to EC$: $\{C, F, A, D, B, E\}$
+**Risultato:** $\{CF\}^+ = R$. Quindi **$CF$ è una chiave candidata.**
+
+
+
+---
+
+### 2. Verifica 3NF
+
+Gli **attributi primi** (che appartengono a *almeno una* chiave) sono: **$\{A, C, F\}$**.
+
+Controlliamo le dipendenze per vedere se rispettano la 3NF ($X \to Y$ deve avere $X$ superchiave oppure $Y$ attributo primo):
+1.  **$A \to B$**: $A$ non è superchiave, $B$ non è primo. **(Violazione)**
+2.  **$C \to AD$**: $C$ non è superchiave. $A$ è primo, ma $D$ non lo è. **(Violazione)**
+3.  **$AF \to EC$**: $AF$ è una superchiave (è chiave). **(OK)**
+
+Basta una violazione perché la relazione non sia in 3NF.
+
+### Decomposizione 3NF
+
+Step 1: Trovare la Copertura Minimalista (G)
+
+Dobbiamo "pulire" l'insieme delle dipendenze F eliminando tutto ciò che è superfluo.
+
+    Rendi i lati destri atomici:
+
+        A→B
+
+        C→A
+
+        C→D
+
+        AF→E
+
+        AF→C
+
+    Elimina attributi ridondanti a sinistra:
+    In AF→E e AF→C, posso togliere A o F? No, perché né {A}+ né {F}+ contengono gli attributi necessari. Quindi AF resta così.
+
+    Elimina dipendenze ridondanti:
+    Controlliamo se una dipendenza può essere derivata dalle altre. Ad esempio, AF→C è ridondante?
+    Dalle altre abbiamo: AF→E e C→A… No, non possiamo ottenere C senza la dipendenza stessa.
+    Tuttavia, nota che avevamo C→A. Se usiamo AF→C e C→A, la dipendenza AF→A sarebbe ridondante (ma non l'avevamo scritta come singola).
+
+La nostra copertura finale G è: {A→B,C→A,C→D,AF→E,AF→C}.
+Step 2: Raggruppamento (Creazione degli schemi)
+
+Si crea un nuovo schema di relazione per ogni gruppo di dipendenze che hanno lo stesso lato sinistro.
+
+    Dal gruppo con sinistra A: R1​(A,B)
+
+    Dal gruppo con sinistra C: R2​(C,A,D)
+
+    Dal gruppo con sinistra AF: R3​(A,F,E,C)
+
+Step 3: Gestione della Chiave (Fondamentale)
+
+L'algoritmo di sintesi richiede che almeno uno degli schemi risultanti contenga una chiave candidata della relazione originale R.
+
+    Le nostre chiavi candidate erano AF e CF.
+
+    Controlliamo gli schemi appena creati:
+
+        R1​(A,B) non contiene AF né CF.
+
+        R2​(C,A,D) non contiene AF né CF.
+
+        R3​(A,F,E,C) contiene AF! (E contiene pure CF).
+
+Poiché la chiave è già "ospitata" in R3​, non dobbiamo fare nulla. Se nessuno schema avesse contenuto una chiave, avremmo dovuto aggiungere un R4​ composto solo dagli attributi della chiave (es. R4​(A,F)).
+Step 4: Eliminazione delle ridondanze tra schemi
+
+Se uno schema è contenuto interamente in un altro, lo eliminiamo. Nel nostro caso, tutti gli schemi hanno attributi unici o combinazioni diverse, quindi rimangono tutti e tre.
+Risultato Finale Spiegato
+
+La tua decomposizione è:
+
+    R1​(A,B): Gestisce il fatto che B dipende da A.
+
+    R2​(C,A,D): Gestisce il fatto che A e D dipendono da C.
+
+    R3​(A,F,C,E): Gestisce la relazione complessa tra la chiave e gli altri attributi.
+
+Perché è corretta?
+
+    Conservazione delle dipendenze: Se prendi tutte le dipendenze di R1​,R2​,R3​, riottieni esattamente F.
+
+    Lossless Join (Senza perdita): Poiché abbiamo incluso la chiave AF in uno degli schemi, siamo certi che potremo ricostruire i dati originali senza "righe fantasma".
+
+    3NF: Ogni tabella ora rispetta le regole della 3NF (le dipendenze interne hanno sempre una chiave come determinante).

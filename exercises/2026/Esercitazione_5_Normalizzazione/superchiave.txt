@@ -1,0 +1,40 @@
+una superchiave è un set di attributi che ti permette di identificare univocamente ogni riga (tupla) di una tabella.
+1. Cos'è tecnicamente una Superchiave?
+
+Immagina una tabella Studenti. Se conosci il Codice_Fiscale, puoi identificare lo studente in modo certo. Quindi {Codice_Fiscale} è una superchiave.
+Ma se aggiungiamo il Nome, anche la coppia {Codice_Fiscale, Nome} è una superchiave, perché continua a identificare univocamente la riga (anche se il nome è "superfluo").
+
+    Definizione: Un insieme di attributi K è una superchiave per una relazione R se non esistono due tuple distinte in R con gli stessi valori per K.
+
+2. Superchiave vs Chiave Candidata
+
+Per capire la 3NF e la BCNF, dobbiamo distinguere queste due:
+
+    Superchiave: Qualsiasi insieme di attributi che identifica univocamente le righe (può contenere "grasso" inutile).
+
+    Chiave Candidata: Una superchiave minima. Se togli un solo attributo, smette di essere una superchiave.
+
+3. Il ruolo della Superchiave in 3NF e BCNF
+
+La normalizzazione serve a eliminare le ridondanze usando le Dipendenze Funzionali (X→Y). La superchiave è il "filtro" che decide se una dipendenza è accettabile o meno.
+Boyce-Codd Normal Form (BCNF)
+
+La BCNF è molto severa. Dice che per ogni dipendenza funzionale non banale X→Y:
+
+    X deve essere una superchiave.
+
+In pratica, in BCNF, l'unica cosa che può determinare qualcos'altro è una superchiave. Se un attributo che non è una superchiave determina qualcos'altro, hai un'anomalia e devi decomporre la tabella.
+Terza Forma Normale (3NF)
+
+La 3NF è un po' più permissiva. Una relazione è in 3NF se per ogni dipendenza X→Y:
+
+    O X è una superchiave (come in BCNF);
+
+    O Y è un attributo primo (ovvero fa parte di una qualsiasi chiave candidata).
+
+Perché questa differenza? La 3NF accetta alcune dipendenze che la BCNF rifiuterebbe, pur di garantire che tutte le dipendenze originali siano preservate dopo la scomposizione dei dati. La BCNF è "più pura", ma a volte difficile da ottenere senza perdere informazioni sulle dipendenze.
+
+Concetto, Ruolo nella Normalizzazione
+Superchiave, "Il ""motore"" che identifica le righe."
+In BCNF, Deve stare a sinistra di ogni freccia (X in X→Y).
+In 3NF, "Se non sta a sinistra, quello a destra deve essere parte di una chiave."
