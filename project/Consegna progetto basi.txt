@@ -8,4 +8,9 @@ Il database gestisce le prenotazioni dei laboratori didattici per le
 scuole (date, numero_studenti, operatori_assegnati)
 e i turni delle guide museali nelle varie sale.
 
-
+Schema ER:
+	* Exhibit (id_exhibit, stato, data_ultima_manutenzione)
+	* Prenotazioni (id_prenotazione, scuola, data, num_studenti, operatore)
+	* Operatori (id_operatore, nome, cognome, ruolo)
+	* Turni (id_guida, sala, scuola_assegnata)
+	* Sale (id_sala, nome, piano, tema)
