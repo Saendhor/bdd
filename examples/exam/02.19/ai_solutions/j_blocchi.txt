@@ -1,0 +1,59 @@
+Dati e Calcoli Preliminari
+
+    Record totali (r): 50.000
+
+    Dimensione Record (R): 512 byte
+
+    Dimensione Blocco (B): 2048 byte
+
+    Memorizzazione Unspanned: I record non vengono spezzati tra i blocchi.
+
+Calcolo del numero di blocchi del file dati (b):
+
+    Record per blocco (bfr): ⌊B/R⌋=⌊2048/512⌋=4 record/blocco.
+
+    Numero di blocchi dati (b): ⌈r/bfr⌉=⌈50.000/4⌉=12.500 blocchi.
+
+Calcolo della dimensione di un'entrata d'indice (Ri​):
+Ogni record dell'indice contiene la chiave (V=100 byte) e il puntatore (P=8 byte).
+Ri​=V+P=100+8=108 byte.
+
+Calcolo del fattore di blocco dell'indice (bfri​):
+bfri​=⌊B/Ri​⌋=⌊2048/108⌋=18 entrate per blocco.
+1. Indice Primario (Sparse Index)
+
+Un indice primario è sparso: contiene un'entrata per ogni blocco del file dati (non per ogni record).
+
+    Numero di entrate (ri​): pari al numero di blocchi dati =12.500.
+
+    Blocchi dell'indice (bi​): ⌈ri​/bfri​⌉=⌈12.500/18⌉=695 blocchi.
+
+    Costo della ricerca: Ricerca binaria sull'indice + 1 accesso al file dati.
+    Accessi=⌈log2​(bi​)⌉+1=⌈log2​(695)⌉+1=10+1=11 accessi
+
+2. Indice Denso (Dense Index)
+
+Un indice denso contiene un'entrata per ogni record del file dati.
+
+    Numero di entrate (rid​): pari al numero di record =50.000.
+
+    Blocchi dell'indice (bid​): ⌈rid​/bfri​⌉=⌈50.000/18⌉=2.778 blocchi.
+
+    Costo della ricerca: Ricerca binaria sull'indice + 1 accesso al file dati.
+    Accessi=⌈log2​(bid​)⌉+1=⌈log2​(2.778)⌉+1=12+1=13 accessi
+
+3. Indice Multilivello Statico
+
+Si parte dall'indice primario calcolato al punto 1 (b1​=695 blocchi) e si creano livelli superiori finché non si arriva a un livello che risiede in un solo blocco.
+
+    Livello 1 (b1​): 695 blocchi (già calcolato).
+
+    Livello 2 (b2​): ⌈b1​/bfri​⌉=⌈695/18⌉=39 blocchi.
+
+    Livello 3 (b3​): ⌈b2​/bfri​⌉=⌈39/18⌉=3 blocchi.
+
+    Livello 4 (b4​): ⌈b3​/bfri​⌉=⌈3/18⌉=1 blocco (Livello Radice).
+
+Costo della ricerca:
+Si accede a un blocco per ogni livello dell'indice, più l'accesso finale al file dati.
+Accessi=Numero Livelli+1=4+1=5 accessi

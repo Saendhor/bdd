@@ -1,0 +1,11 @@
+Consegna progetto basi di dati 2025/2026
+
+Museo Interattivo / Science Center
+Oltre alla biglietteria, il sistema gestisce gli "exhibit" (installazioni interattive).
+Ogni installazione ha uno stato (attivo, guasto, in manutenzione)
+e un piano di manutenzione periodica.
+Il database gestisce le prenotazioni dei laboratori didattici per le
+scuole (date, numero_studenti, operatori_assegnati)
+e i turni delle guide museali nelle varie sale.
+
+

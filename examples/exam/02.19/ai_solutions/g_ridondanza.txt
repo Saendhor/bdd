@@ -57,4 +57,3 @@ I volumi forniti sono piuttosto **bassi**:
 
 > **Regola generale:** La ridondanza conviene quando le letture sono migliaia di volte superiori alle scritture e i volumi di dati sono tali da rendere il calcolo "al volo" troppo lento. Qui siamo nella situazione opposta.
 
-Ti servirebbe vedere come cambierebbe il calcolo se le letture diventassero, ad esempio, 10.000 al giorno?
