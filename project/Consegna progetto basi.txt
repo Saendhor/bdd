@@ -9,8 +9,12 @@ scuole (date, numero_studenti, operatori_assegnati)
 e i turni delle guide museali nelle varie sale.
 
 Schema ER:
-	* Exhibit (id_exhibit, stato, data_ultima_manutenzione)
-	* Prenotazioni (id_prenotazione, scuola, data, num_studenti, operatore)
-	* Operatori (id_operatore, nome, cognome, ruolo)
-	* Turni (id_guida, sala, scuola_assegnata)
-	* Sale (id_sala, nome, piano, tema)
+	* Sale (id_sala [PK], nome, piano, tema)
+	* Operatori (id_operatore [PK], nome, cognome, ruolo)
+	* Exhibit (id_exhibit [PK], nome, stato, id_sala [FK], data_ultima_manutenzione, frequenza_manutenzione)
+	* Prenotazioni (id_prenotazione [PK], scuola, data_prenotazione, num_studenti)
+	* Assegazioni_Laboratori (id_prenotazione [PK] [FK], id_operatore[PK] [FK])
+	* Turni (id_turno [PK], data_turno, ora_inizio, ora_fine, id_operatore [FK], id_sala [FK])
+	
+Note:
+	* Vincolo per "stato" degli Exhibit (ACTIVE default, INACTIVE, MAINTENANCE)

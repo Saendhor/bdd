@@ -1,0 +1,61 @@
+1. Approccio Top-Down (Dall'alto verso il basso)
+
+Questo è l'approccio più comune nella progettazione di sistemi complessi partendo da zero. Si basa sull'analisi dei requisiti globali.
+
+    Il concetto: Si parte dalla visione d'insieme (le entità principali) e si scende progressivamente nei dettagli (gli attributi e le relazioni).
+
+    Il processo:
+
+        Si definiscono le entità principali (es. Cliente, Ordine, Prodotto).
+
+        Si stabiliscono le relazioni tra queste entità.
+
+        Infine, si definiscono gli attributi specifici per ogni entità (es. Nome, Data, Prezzo).
+
+    Quando si usa: Quando il progetto è nuovo e si ha una chiara comprensione degli obiettivi aziendali globali.
+
+2. Approccio Bottom-Up (Dal basso verso l'alto)
+
+Questo approccio è più orientato ai dati esistenti ed è spesso utilizzato per consolidare o ristrutturare database già presenti.
+
+    Il concetto: Si parte dai singoli elementi di dato (gli attributi) per poi raggrupparli in entità coerenti.
+
+    Il processo:
+
+        Si elencano tutti gli attributi necessari (es. Nome_Cliente, Codice_Prodotto, Via_Spedizione).
+
+        Si applicano tecniche di normalizzazione per eliminare le ridondanze.
+
+        Si aggregano questi dati in entità e tabelle logiche.
+
+    Quando si usa: Quando si hanno già a disposizione molti moduli, documenti cartacei o file Excel sparsi che devono essere "messi a sistema".
+
+Esempio Top-Down: "Dall'idea alla struttura"
+
+In questo scenario, ti siedi con il direttore della biblioteca e analizzi come funziona l'attività a livello macroscopico.
+
+    Identificazione dei macro-concetti: Capisci che gli elementi fondamentali sono i Libri, i Soci e i Prestiti.
+
+    Definizione delle relazioni: Stabilisci che un Socio può effettuare più Prestiti, e ogni Prestito riguarda uno o più Libri.
+
+    Dettaglio degli attributi: Solo ora decidi cosa salvare. Per il Libro ti servono Titolo e Autore; per il Socio Nome e Codice Fiscale.
+
+    Risultato: Ottieni una struttura molto pulita che rispecchia perfettamente il modello di business della biblioteca, ma potresti dimenticare qualche piccolo dettaglio tecnico (come il codice della corsia dove si trova il libro).
+
+Esempio Bottom-Up: "Dai documenti alla struttura"
+
+In questo caso, non parli con nessuno, ma ti viene consegnata una scatola piena di vecchie ricevute cartacee dei prestiti e l'elenco dei libri salvato su un file Excel disordinato.
+
+    Analisi dei dati atomici: Prendi una ricevuta e trascrivi ogni singolo campo: Nome Socio, Cognome Socio, Titolo Libro, Data Inizio, Data Fine, ISBN, Editore, Telefono Socio.
+
+    Normalizzazione: Ti accorgi che il nome del socio si ripete identico su dieci ricevute diverse. Decidi quindi di "staccare" i dati del socio in una tabella separata per non sprecare spazio.
+
+    Sintesi delle entità: Raggruppando i dati che hanno senso tra loro, "scopri" le tabelle. Capisci che Titolo, ISBN ed Editore formano l'entità Libro.
+
+    Risultato: Il database è tecnicamente perfetto e non ha dati duplicati (ridondanza zero), ma potresti aver creato una struttura che non tiene conto di regole future (ad esempio, se la biblioteca decidesse di affittare anche DVD, la tua struttura basata solo su libri andrebbe corretta).
+
+In sintesi:
+
+    Con il Top-Down disegni prima il "contenitore" (le tabelle) basandoti sulla logica.
+
+    Con il Bottom-Up analizzi prima il "contenuto" (i dati) e poi costruisci il contenitore più adatto per ospitarli.
