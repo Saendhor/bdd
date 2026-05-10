@@ -1,0 +1,42 @@
+=====================================================================================================================================================
+|              Idee per le query dagli esercizi passati                                                                                             |
+=====================================================================================================================================================
+
+1) [TRIGGER] Scrivere codice SQL per implementare il controllo che impedisca l'assegnazione di una lezione ad un istruttore se il numero di lezioni
+    tenute dall'istruttore nei 7 gg precedenti supera la media del numero di lezioni tenute dagli altri istruttori sempre nei 7 gg precedenti.
+
+Tradotta: [TRIGGER]
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+2) Trovare i partecipanti (dando nome e cognome in output) che hanno partecipato a
+tutte le escursioni
+
+Tradotta: [QUERY]
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3) Trovare le guide che non hanno mai partecipato ad escursioni di difficoltà massima
+
+Tradotta: [QUERY] a
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+4) Dire ogni accompagnatore quante escursioni ha guidato;
+
+Tradotta: [QUERY] a
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+5) Trovare nome e cognome dei partecipanti agli eventi che non si sono tenuti
+tenuti tra il 15 e il 20 ottobre 2009
+
+Tradotta: [QUERY] a
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+6) Trovare le persone che hanno partecipato a tutti gli eventi del 2013.
+
+Tradotta: [QUERY] a
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
