@@ -1,0 +1,23 @@
+1. Concetto
+
+Rappresenta l'oggetto o la relazione del mondo reale che vogliamo memorizzare nel database. In questa colonna trovi due categorie:
+
+    Sostantivi (Entità): Come Fumetto, Cliente, Ordine. Sono le "cose" che popolano il database.
+
+    Verbi (Relazioni): Come Fornisce, Effettua, Contiene. Rappresentano i legami logici tra le entità (ad esempio: un Cliente effettua un Ordine).
+
+2. Tipo
+
+Questo parametro serve a distinguere la natura del concetto all'interno dello schema E-R (Entity-Relationship):
+
+    E (Entità): Indica una classe di oggetti che hanno proprietà comuni. Ad esempio, l'entità "Fumetto" raccoglierà tutti i fumetti del negozio.
+
+    R (Relazione/Associazione): Indica un legame tra due o più entità. Ad esempio, "Contiene" è la relazione che lega l'entità Ordine all'entità Riga Ordine.
+
+3. Volume
+
+Il volume indica la quantità prevista di occorrenze per quel concetto. È una stima numerica fondamentale per chi deve amministrare il database.
+
+    Per le Entità (E): Indica quanti record (righe) ci saranno in quella tabella. Ad esempio, hai 200 Clienti e 400 Fumetti.
+
+    Per le Relazioni (R): Indica quante volte quel legame si verifica. Nota come spesso il volume della relazione coincida con quello dell'entità più "fitta": ad esempio, se hai 1600 Righe Ordine, avrai 1600 istanze della relazione "Contiene" che le collega agli ordini.

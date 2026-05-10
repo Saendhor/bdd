@@ -1,0 +1,6 @@
+Simbolo 	Significato	Descrizione
+----------------------------------------------------------------------------------------------
+  I		Interattiva	Spesso usato per indicare un'operazione eseguita da un utente in tempo reale.
+  L		Lettura		L'operazione interroga il database (SELECT) senza cambiare nulla.
+  S		Scrittura	L'operazione inserisce, modifica o cancella dati (INSERT, UPDATE, DELETE).
+  B		Batch		Operazione eseguita automaticamente dal sistema su grandi volumi di dati.
