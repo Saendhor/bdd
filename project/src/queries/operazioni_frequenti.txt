@@ -1,0 +1,20 @@
+Lista operazioni frequenti:
+    * Modifica tema della Sala;
+    * Reperire il piano della Sala;
+    * Visualizzare tutti i turni di una guida;
+    * Vedere quale operatore tecnico è presente nella struttura;
+    * Inserimento di un nuovo operatore;
+    * Rimozione vecchio operatore;
+    * Visualizzare la lista di tutti gli operatori;
+    * Visualizzare lo stato degli Exhibit;
+    * Visualizzare tutti gli Exhibit che richiedono manutenzione;
+    * Visualizzare l'Exhibit la cui data di ultima manutenzione è la più lontana;
+    * Visualizzare gli Exhibit presenti in una data Sala
+    * Introduzione di un nuovo Exhibit
+    * Rimozione di un vecchio Exhibit
+    * Visualizzare il numero totale di prenotazioni
+    * Visualizzare il numero di prenotazioni di una scuola in un anno
+    * Visualizzare il numero di prenotazioni per la settimana
+    * Visualizzare le scuole che verranno in giornata
+    * Visualizzare il numero di partecipanti ai laboratori
+    * Visualizzare le guide presenti in giornata

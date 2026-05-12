@@ -1,0 +1,1 @@
+-- Trovare l'Exhibit la cui data di ultima manutenzione è la più lontana;

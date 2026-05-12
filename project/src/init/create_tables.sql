@@ -6,7 +6,6 @@ USE MuseoInterattivo;
 CREATE TABLE Sale (
     id_sala INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
-    piano INT NOT NULL,
     tema VARCHAR(50)
 );
 
@@ -33,7 +32,7 @@ CREATE TABLE Exhibit (
 CREATE TABLE Prenotazioni (
     id_prenotazione INT PRIMARY KEY AUTO_INCREMENT,
     scuola VARCHAR(150) NOT NULL,
-    data_prenotazione DATETIME NOT NULL,
+    data_prenotazione DATE NOT NULL,
     num_studenti INT CHECK (num_studenti > 0)
 );
 
