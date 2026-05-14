@@ -1,5 +1,0 @@
--- Implementare il controllo che impedisca l'assegnazione
--- di un laboratorio ad una guida se il numero di laboratori
--- tenuti dalla guida nei 7 gg precedenti supera la media del
--- numero di laboratori tenuti dagli altri operatori sempre nei
--- 7 gg precedenti;

@@ -1,6 +1,5 @@
 Lista operazioni frequenti:
     * Modifica tema della Sala;
-    * Reperire il piano della Sala;
     * Visualizzare tutti i turni di una guida;
     * Vedere quale operatore tecnico è presente nella struttura;
     * Inserimento di un nuovo operatore;

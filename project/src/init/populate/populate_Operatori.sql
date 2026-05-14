@@ -1,3 +1,5 @@
+USE MuseoInterattivo;
+
 -- Inserimento Operatori
 -- Template ('nome', 'cognome', 'ruolo_ENUM')
 -- stato: GUIDE, TECHNICAL

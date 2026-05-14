@@ -1,3 +1,5 @@
+USE MuseoInterattivo;
+
 -- Inserimento Sale
 -- Template ('nome', piano, 'tema')
 INSERT INTO Sale (nome, tema) VALUES 

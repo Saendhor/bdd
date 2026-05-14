@@ -1,1 +1,0 @@
--- Dire a quanti laboratori si è dedicata ogni guida;

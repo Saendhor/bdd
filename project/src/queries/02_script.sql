@@ -1,1 +1,0 @@
--- Trovare le sale coperte da tutti i turni;

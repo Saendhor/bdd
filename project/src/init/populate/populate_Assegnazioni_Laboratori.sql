@@ -1,6 +1,8 @@
+USE MuseoInterattivo;
+
 -- Inserimento Assegnazione_Laboratori
 -- Template (id_prenotazione, id_operatore)
-INSERT INTO Assegnazione_Laboratori (id_prenotazione, id_operatore) VALUES
+INSERT INTO Assegnazioni_Laboratori (id_prenotazione, id_operatore) VALUES
 (1, 1),
 (2, 2),
 (3, 4),

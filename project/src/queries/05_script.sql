@@ -1,1 +1,0 @@
--- Trovare il nome delle scuole che hanno effettuato una prenotazione fra il 05/10/2024 e il 06/12/2025

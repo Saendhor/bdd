@@ -1,3 +1,5 @@
+USE MuseoInterattivo;
+
 -- Inserimento Prenotazioni
 -- Template ('scuola', 'data_prenotazione_aaaa/mm/gg', num_studenti)
 INSERT INTO Prenotazioni (scuola, data_prenotazione, num_studenti) VALUES

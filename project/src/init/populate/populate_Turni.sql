@@ -1,3 +1,5 @@
+USE MuseoInterattivo;
+
 -- Inserimento Turni
 -- Template ('data_turno', 'ora_inizio', 'ora_fine', id_operatore, id_sala)
 INSERT INTO Turni (data_turno, ora_inizio, ora_fine, id_operatore, id_sala) VALUES

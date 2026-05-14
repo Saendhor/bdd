@@ -1,3 +1,5 @@
+USE MuseoInterattivo;
+
 -- Inserimento Exhibit
 -- Template ('nome', id_sala, 'stato', 'data_ultima_manutenzione_aaaa-mm-gg', frequenza_manutenzione_giorni),
 INSERT INTO Exhibit (nome, id_sala, stato, data_ultima_manutenzione, frequenza_manutenzione_giorni) VALUES 
