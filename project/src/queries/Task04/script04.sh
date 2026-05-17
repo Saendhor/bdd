@@ -1,0 +1,1 @@
+mariadb -uuser -ppassword < query04.sql
