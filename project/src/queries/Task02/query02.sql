@@ -4,9 +4,9 @@ Trovare l'Exhibit la cui data di ultima manutenzione
 */
 
 USE MuseoInterattivo;
-SELECT e.id_exhibit, e.nome
+SELECT e.id_exhibit, e.nome, e.data_ultima_manutenzione
 FROM Exhibit e
-WHERE e.data_ultima_manutenzione > ALL (
+WHERE e.data_ultima_manutenzione <= ALL (
     SELECT te.data_ultima_manutenzione
     FROM Exhibit te
 );
